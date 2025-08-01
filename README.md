@@ -16,3 +16,9 @@ This project provides a MCP (Model Context Protocol) server that uses data from 
     ```
 
 This will start both the `nseindia` and `mcp` services. The `mcp` service will be available on port `8000`.
+
+## Credits
+
+This project uses the following repository for NSE India data:
+
+- [stock-nse-india](https://github.com/hi-imcodeman/stock-nse-india)
