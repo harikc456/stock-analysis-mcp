@@ -4,4 +4,3 @@ pandas
 ta
 google-generativeai
 google-adk
-streamlit
