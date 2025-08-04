@@ -3,8 +3,6 @@ from google.adk.agents.llm_agent import LlmAgent
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
 from google.adk.tools.mcp_tool import SseConnectionParams
 
-os.environ["GOOGLE_API_KEY"] = "AIzaSyDWRE42ozhuAfSIAt92pccu3GgDDkILCfU"
-
 mcp_toolset = MCPToolset(
     connection_params=SseConnectionParams(
         url="http://127.0.0.1:8000/sse",
