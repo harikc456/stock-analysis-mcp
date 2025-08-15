@@ -71,9 +71,7 @@ def get_tsi(symbol: str, start_date: str, end_date: str) -> list[float]:
     return tsi(df.CH_CLOSING_PRICE, fillna=True).tolist()
 
 
-def get_stoch(
-    symbol: str, start_date: str, end_date: str, window: int, smooth_window: int
-) -> list[float]:
+def get_stoch(symbol: str, start_date: str, end_date: str, window: int, smooth_window: int) -> list[float]:
     df = get_data(symbol, start_date, end_date)
     return stoch(
         df.CH_TRADE_HIGH_PRICE,
@@ -97,51 +95,37 @@ def get_ema(symbol: str, start_date: str, end_date: str, window: int) -> list[fl
 
 def get_ichimoku_a(symbol: str, start_date: str, end_date: str) -> list[float]:
     df = get_data(symbol, start_date, end_date)
-    return ichimoku_a(
-        df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, fillna=True
-    ).tolist()
+    return ichimoku_a(df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, fillna=True).tolist()
 
 
 def get_ichimoku_b(symbol: str, start_date: str, end_date: str) -> list[float]:
     df = get_data(symbol, start_date, end_date)
-    return ichimoku_b(
-        df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, fillna=True
-    ).tolist()
+    return ichimoku_b(df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, fillna=True).tolist()
 
 
 def get_adx(symbol: str, start_date: str, end_date: str) -> list[float]:
     df = get_data(symbol, start_date, end_date)
-    return adx(
-        df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, df.CH_CLOSING_PRICE, fillna=True
-    ).tolist()
+    return adx(df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, df.CH_CLOSING_PRICE, fillna=True).tolist()
 
 
 def get_psar_up(symbol: str, start_date: str, end_date: str) -> list[float]:
     df = get_data(symbol, start_date, end_date)
-    return psar_up(
-        df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, df.CH_CLOSING_PRICE, fillna=True
-    ).tolist()
+    return psar_up(df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, df.CH_CLOSING_PRICE, fillna=True).tolist()
 
 
 def get_psar_down(symbol: str, start_date: str, end_date: str) -> list[float]:
     df = get_data(symbol, start_date, end_date)
-    return psar_down(
-        df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, df.CH_CLOSING_PRICE, fillna=True
-    ).tolist()
+    return psar_down(df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, df.CH_CLOSING_PRICE, fillna=True).tolist()
 
 
 def get_aroon_up(symbol: str, start_date: str, end_date: str) -> list[float]:
     df = get_data(symbol, start_date, end_date)
-    return aroon_up(
-        df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, df.CH_CLOSING_PRICE, fillna=True
-    ).tolist()
+    return aroon_up(df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, df.CH_CLOSING_PRICE, fillna=True).tolist()
 
 
 def get_aroon_down(symbol: str, start_date: str, end_date: str) -> list[float]:
     df = get_data(symbol, start_date, end_date)
-    return aroon_down(
-        df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, df.CH_CLOSING_PRICE, fillna=True
-    ).tolist()
+    return aroon_down(df.CH_TRADE_HIGH_PRICE, df.CH_TRADE_LOW_PRICE, df.CH_CLOSING_PRICE, fillna=True).tolist()
 
 
 # Volume based metrics - On-Balance Volume (OBV), Chaikin Money Flow (CMF), Volume Weighted Average Price (VWAP)
@@ -149,9 +133,7 @@ def get_aroon_down(symbol: str, start_date: str, end_date: str) -> list[float]:
 
 def get_on_balance_volume(symbol: str, start_date: str, end_date: str) -> list[float]:
     df = get_data(symbol, start_date, end_date)
-    return on_balance_volume(
-        df.CH_CLOSING_PRICE, df.CH_TOT_TRADED_QTY, fillna=True
-    ).tolist()
+    return on_balance_volume(df.CH_CLOSING_PRICE, df.CH_TOT_TRADED_QTY, fillna=True).tolist()
 
 
 def get_chaikin_money_flow(symbol: str, start_date: str, end_date: str) -> list[float]:
@@ -165,9 +147,7 @@ def get_chaikin_money_flow(symbol: str, start_date: str, end_date: str) -> list[
     ).tolist()
 
 
-def get_volume_weighted_average_price(
-    symbol: str, start_date: str, end_date: str
-) -> list[float]:
+def get_volume_weighted_average_price(symbol: str, start_date: str, end_date: str) -> list[float]:
     df = get_data(symbol, start_date, end_date)
     return volume_weighted_average_price(
         df.CH_TRADE_HIGH_PRICE,

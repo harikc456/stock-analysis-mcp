@@ -1,8 +1,24 @@
-import os
 import datetime
-from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents import LlmAgent, LoopAgent, SequentialAgent
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
 from google.adk.tools.mcp_tool import SseConnectionParams
+from google.adk.tools.tool_context import ToolContext
+
+
+# --- State Keys ---
+STATE_TA = "technical_analysis"
+STATE_EVAL = "evaluation"
+COMPLETION_PHRASE = "STOP EXECUTION"
+
+
+def exit_loop(tool_context: ToolContext):
+    """Call this function ONLY when the critique indicates no further changes are needed, signaling
+    the iterative process should end."""
+    print(f"  [Tool Call] exit_loop triggered by {tool_context.agent_name}")
+    tool_context.actions.escalate = True
+    # Return empty dict as tools should typically return JSON-serializable output
+    return {}
+
 
 mcp_toolset = MCPToolset(
     connection_params=SseConnectionParams(
@@ -12,10 +28,10 @@ mcp_toolset = MCPToolset(
 
 today_date = datetime.datetime.now().strftime("%A, %d %B %Y")
 
-root_agent = LlmAgent(
+ta_agent = LlmAgent(
     model="gemini-2.0-flash",
-    name="stock_assistant",
-    instruction=f"""
+    name="stock_ta_assistant",
+    instruction="""
     You are an agent that helps to perform technical analysis for Indian stocks. The user will provide you the stock symbol from NSE.
     You have to use the given tools to perform technical analysis and provide sound information to the user. 
     You can also fetch recent stock-related news and discussions from Reddit.
@@ -24,4 +40,24 @@ root_agent = LlmAgent(
     Today's date is {today_date}.
     """,
     tools=[mcp_toolset],
+    output_key=STATE_TA,
+)
+
+eval_agent = LlmAgent(
+    model="gemini-2.0-flash",
+    name="eval_agent",
+    instruction="""
+    You are an agent that evaluates the analysis performed on stock by another agent, if the analysis is sufficient and the accurate, 
+    then You MUST call the 'exit_loop' function. Do not output any text. Else (the critique contains actionable feedback)
+    Carefully apply the suggestions.
+    """,
+    tools=[exit_loop],
+)
+
+refinement_loop = LoopAgent(name="OrchestratorAgent", sub_agents=[ta_agent, eval_agent], max_iterations=5)
+
+root_agent = SequentialAgent(
+    name="RootAgent",
+    sub_agents=[refinement_loop],
+    description="Has access to specialized agents that will perform various operations to analyse given stock",
 )
