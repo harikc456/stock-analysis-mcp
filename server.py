@@ -15,6 +15,7 @@ from utils import (
     get_on_balance_volume,
     get_chaikin_money_flow,
     get_volume_weighted_average_price,
+    get_reddit_stock_news,
 )
 
 # Create a server instance
@@ -222,6 +223,18 @@ def get_volume_weighted_average_price_tool(
     end_date: the end date of the range, should be in YYYY-MM-DD
     """
     return get_volume_weighted_average_price(symbol, start_date, end_date)
+
+
+@mcp.tool
+def get_reddit_stock_news_tool(symbol: str, time_filter: str = "month") -> list[dict]:
+    """
+    Fetches recent stock-related news and discussions from Reddit.
+    
+    Params:
+    symbol: Upper case symbol of the stock
+    time_filter: Time filter for Reddit posts. Options: "hour", "day", "week", "month", "year", "all", default: "month"
+    """
+    return get_reddit_stock_news(symbol, time_filter)
 
 
 if __name__ == "__main__":

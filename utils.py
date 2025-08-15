@@ -1,6 +1,7 @@
 import os
 import requests
 import pandas as pd
+import praw
 from ta.trend import (
     macd,
     ema_indicator,
@@ -19,7 +20,7 @@ from ta.volume import (
     volume_weighted_average_price,
 )
 
-from constants import NSE_HOST_URL, HISTORICAL_ENDPOINT, METADATA_ENDPOINT, DUMP_DIR
+from constants import NSE_HOST_URL, HISTORICAL_ENDPOINT, METADATA_ENDPOINT, DUMP_DIR, REDDIT_SUBREDDITS, REDDIT_POST_LIMIT
 
 
 def get_data(symbol, start_date, end_date):
@@ -175,3 +176,63 @@ def get_volume_weighted_average_price(
         df.CH_TOT_TRADED_QTY,
         fillna=True,
     ).tolist()
+
+
+def get_reddit_stock_news(symbol: str, time_filter: str = "month") -> list[dict]: 
+    try:
+        reddit_client_id = os.environ.get("REDDIT_CLIENT_ID")
+        reddit_client_secret = os.environ.get("REDDIT_CLIENT_SECRET")
+        reddit_user_agent = os.environ.get("REDDIT_USER_AGENT", "stock-analysis-mcp/1.0")
+        limit = REDDIT_POST_LIMIT   
+
+        reddit = praw.Reddit(
+            client_id=reddit_client_id,
+            client_secret=reddit_client_secret,
+            user_agent=reddit_user_agent
+        )
+        
+        posts = []
+        search_query = f"{symbol} OR '${symbol}'"
+        
+        for subreddit_name in REDDIT_SUBREDDITS:
+            try:
+                subreddit = reddit.subreddit(subreddit_name)
+                search_results = subreddit.search(search_query, limit=limit, time_filter=time_filter)
+                
+                for post in search_results:
+                    comments = get_top_comments(post, 5)
+                    posts.append({
+                        "title": post.title,
+                        "content": post.selftext[:500] + "..." if len(post.selftext) > 500 else post.selftext,
+                        "url": f"https://reddit.com{post.permalink}",
+                        "score": post.score,
+                        "subreddit": subreddit_name,
+                        "created_utc": post.created_utc,
+                        "num_comments": post.num_comments,
+                        "comments": comments,
+                        "flair": post.link_flair_text if post.link_flair_text else "None",
+                    })
+            except Exception:
+                continue
+        
+        posts.sort(key=lambda x: x["score"], reverse=True)
+        return posts[:limit]
+        
+    except Exception as e:
+        return [
+            {
+                "message": f"Error fetching Reddit posts for {symbol}: {str(e)}",
+            }
+        ]
+
+def get_top_comments(post, limit=3):
+    """Fetches top comments from a post."""
+    comments = []
+    post.comments.replace_more(limit=0)
+    for comment in post.comments[:limit]:
+        comments.append({
+            "author": str(comment.author),
+            "body": comment.body[:500] + "..." if len(comment.body) > 500 else comment.body,
+            "score": comment.score
+        })
+    return comments
