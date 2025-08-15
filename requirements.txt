@@ -4,3 +4,4 @@ pandas
 ta
 google-generativeai
 google-adk
+praw
