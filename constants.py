@@ -3,3 +3,6 @@ HISTORICAL_ENDPOINT = "/api/equity/historical/{symbol}"
 METADATA_ENDPOINT = "/api/equity/{symbol}"
 
 DUMP_DIR = "./data"
+
+REDDIT_SUBREDDITS = ["IndianStockMarket", "IndianStreetBets", "StockMarketIndia"]
+REDDIT_POST_LIMIT = 30
