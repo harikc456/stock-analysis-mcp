@@ -1,5 +1,5 @@
 import datetime
-from google.adk.agents import LlmAgent, LoopAgent, SequentialAgent
+from google.adk.agents import LlmAgent, LoopAgent
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
 from google.adk.tools.mcp_tool import SseConnectionParams
 from google.adk.tools.tool_context import ToolContext
@@ -31,7 +31,7 @@ today_date = datetime.datetime.now().strftime("%A, %d %B %Y")
 ta_agent = LlmAgent(
     model="gemini-2.0-flash",
     name="stock_ta_assistant",
-    instruction="""
+    instruction=f"""
     You are an agent that helps to perform technical analysis for Indian stocks. The user will provide you the stock symbol from NSE.
     You have to use the given tools to perform technical analysis and provide sound information to the user. 
     You can also fetch recent stock-related news and discussions from Reddit.
@@ -54,10 +54,4 @@ eval_agent = LlmAgent(
     tools=[exit_loop],
 )
 
-refinement_loop = LoopAgent(name="OrchestratorAgent", sub_agents=[ta_agent, eval_agent], max_iterations=5)
-
-root_agent = SequentialAgent(
-    name="RootAgent",
-    sub_agents=[refinement_loop],
-    description="Has access to specialized agents that will perform various operations to analyse given stock",
-)
+root_agent = LoopAgent(name="OrchestratorAgent", sub_agents=[ta_agent, eval_agent], max_iterations=5)

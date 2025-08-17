@@ -219,7 +219,7 @@ def get_volume_weighted_average_price_tool(symbol: str, start_date: str, end_dat
 def get_reddit_stock_news_tool(symbol: str, time_filter: str = "month") -> list[dict]:
     """
     Fetches recent stock-related news and discussions from Reddit.
-    
+
     Params:
     symbol: Upper case symbol of the stock
     time_filter: Time filter for Reddit posts. Options: "hour", "day", "week", "month", "year", "all", default: "month"
