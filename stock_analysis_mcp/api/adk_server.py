@@ -15,9 +15,17 @@ app: FastAPI = get_fast_api_app(
     web=True,
 )
 
-app.title = "Production ADK Agent - Stock MCP"
+app.title = "Stock Analysis Agent"
 app.description = ""
 app.version = "1.0.0"
+
+# Remove default ADK routes that shadow our custom endpoints
+routes_to_keep = []
+for route in app.routes:
+    if getattr(route, "path", "") in ["/health", "/"]:
+        continue
+    routes_to_keep.append(route)
+app.router.routes = routes_to_keep
 
 
 @app.get("/health")
@@ -27,7 +35,7 @@ def health_check() -> dict[str, str]:
 
 @app.get("/")
 def root() -> dict[str, str]:
-    return {"service": "Production ADK Agent - Stock MCP", "description": "", "docs": "/docs", "health": "/health"}
+    return {"service": "Stock Analysis Agent", "description": "", "docs": "/docs", "health": "/health"}
 
 
 if __name__ == "__main__":
